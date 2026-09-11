@@ -1,13 +1,16 @@
 metrics_to_run:
+  - tool_use_quality
+  - grounding
   - custom_response_quality
+  - agent_turn_count
 
 custom_metrics:
-  # Default: local LLM-as-judge (see response_quality.py). Runs in-process via
-  # google-genai on Agent Platform (ADC) or Google AI Studio (GEMINI_API_KEY).
+  # Local LLM-as-judge scoring 1-5 for accuracy, relevance, and reference grounding
   - name: custom_response_quality
     custom_function_file: response_quality.py
+  # Evaluator tracking interaction turn depth for multi-turn conversation complexity
   - name: agent_turn_count
     custom_function: |
       def evaluate(instance):
           turns = (instance.get("agent_data") or {}).get("turns", [])
-          return {'score': len(turns)}
+          return {'score': max(1, len(turns))}

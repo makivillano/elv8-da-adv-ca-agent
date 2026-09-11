@@ -1,0 +1,184 @@
+{
+  "eval_cases": [
+    {
+      "eval_case_id": "multiturn_dual_cashier_to_inventory",
+      "description": "Tests multi-turn context retention and intent switching from Turn 1 parallel cashier risk dispatch to Turn 2 store inventory lookup",
+      "agent_data": {
+        "turns": [
+          {
+            "events": [
+              {
+                "author": "user",
+                "content": {
+                  "role": "user",
+                  "parts": [
+                    {
+                      "text": "What is Cashier CASH_1190's live 1-hour override rate right now, compared to their 7-day historical override baseline?"
+                    }
+                  ]
+                }
+              },
+              {
+                "author": "cymbal_operations_agent",
+                "content": {
+                  "role": "model",
+                  "parts": [
+                    {
+                      "text": "Cashier CASH_1190 at Store 48 has a live 1-hour manual override rate of approximately 0.65 (13 overrides across 20 transactions), compared to a 7-day historical baseline of 0.12. This indicates a significant deviation in override activity."
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "events": [
+              {
+                "author": "user",
+                "content": {
+                  "role": "user",
+                  "parts": [
+                    {
+                      "text": "Now check the inventory on-hand at that cashier's store (Store 48) for any items with stockout risk under 20 hours."
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "context": "Cashier CASH_1190 operates at Store 48. In Turn 2, the user references 'that cashier's store', requiring the agent to retain context and query gold_inventory_reconciliation_ledger for store_id STORE_048 with estimated cover hours less than 20.",
+      "reference": {
+        "response": {
+          "role": "model",
+          "parts": [
+            {
+              "text": "Retrieved inventory status for Store 48 (retained from Cashier CASH_1190's store context) showing items with cover hours remaining under 20."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "eval_case_id": "multiturn_sequential_promo_abuse_to_checkout_audit",
+      "description": "Tests multi-turn sequential dispatch from Turn 1 promo abuse alert ranking to Turn 2 external checkout logs retrieval",
+      "agent_data": {
+        "turns": [
+          {
+            "events": [
+              {
+                "author": "user",
+                "content": {
+                  "role": "user",
+                  "parts": [
+                    {
+                      "text": "Show cashiers with active cashier promo abuse alerts in the last 7 days and identify the top offender."
+                    }
+                  ]
+                }
+              },
+              {
+                "author": "cymbal_operations_agent",
+                "content": {
+                  "role": "model",
+                  "parts": [
+                    {
+                      "text": "Based on pos_anomaly_alerts in BigQuery, Cashier CASH_0412 at Store 12 is the top offender with 18 promo abuse alert triggers over the past 7 days."
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "events": [
+              {
+                "author": "user",
+                "content": {
+                  "role": "user",
+                  "parts": [
+                    {
+                      "text": "Retrieve the external checkout transaction logs from AWS S3 for that top offender to verify the transactions."
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "context": "Sequential investigation workflow: Turn 1 identified top offender CASH_0412. In Turn 2, the agent queries silver_pos_transactions for CASH_0412 to retrieve cross-cloud AWS S3 transaction logs.",
+      "reference": {
+        "response": {
+          "role": "model",
+          "parts": [
+            {
+              "text": "External checkout transaction logs retrieved from silver_pos_transactions in S3 for top offender CASH_0412, verifying the promo abuse patterns."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "eval_case_id": "multiturn_hardware_troubleshoot_to_warranty",
+      "description": "Tests multi-turn intent switching from in-store POS hardware diagnostic to warranty policy verification",
+      "agent_data": {
+        "turns": [
+          {
+            "events": [
+              {
+                "author": "user",
+                "content": {
+                  "role": "user",
+                  "parts": [
+                    {
+                      "text": "The receipt printer on Diebold Nixdorf BEETLE A1150 is jammed with error code ERR-DN-PRNT-24V. What should we do?"
+                    }
+                  ]
+                }
+              },
+              {
+                "author": "cymbal_operations_agent",
+                "content": {
+                  "role": "model",
+                  "parts": [
+                    {
+                      "text": "For error ERR-DN-PRNT-24V on Diebold Nixdorf BEETLE A1150: Power down the terminal, clear the thermal paper cutter path, inspect the 24V power supply feed, and restart. Refer to the Diebold Nixdorf BEETLE A1150 Service Guide."
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "events": [
+              {
+                "author": "user",
+                "content": {
+                  "role": "user",
+                  "parts": [
+                    {
+                      "text": "If the cutter mechanism is mechanically broken, is printer module replacement covered under our hardware warranty policy?"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "context": "Intent switching: Turn 1 used pos_troubleshooting_rag_tool for physical printer diagnostics. Turn 2 switches intent to cymbal_analytics_tool to query warranty_generic_sections_extracted for hardware warranty terms.",
+      "reference": {
+        "response": {
+          "role": "model",
+          "parts": [
+            {
+              "text": "Under the store hardware warranty policy in warranty_generic_sections_extracted, mechanical printer module defects and cutter failures are covered under standard enterprise service replacement terms."
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

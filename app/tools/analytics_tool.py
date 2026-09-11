@@ -4,9 +4,12 @@ import time
 from typing import Any
 from dotenv import load_dotenv
 import google.auth
-from google.adk.tools.data_agent import data_agent_tool, DataAgentToolConfig
+from google.adk.tools.data_agent import data_agent_tool
+from google.adk.tools.data_agent.config import DataAgentToolConfig
 
 load_dotenv()
+os.environ["GOOGLE_API_USE_CLIENT_CERTIFICATE"] = "false"
+os.environ["CLOUDSDK_CONTEXT_AWARE_USE_ECP_HTTP_PROXY"] = "false"
 
 logger = logging.getLogger(__name__)
 
@@ -72,7 +75,7 @@ def cymbal_analytics_tool(query: str) -> str:
   base_delay = 1.0
 
   creds, _ = google.auth.default()
-  settings = DataAgentToolConfig(location="global")
+  settings = DataAgentToolConfig()
 
   for attempt in range(1, max_retries + 1):
     try:

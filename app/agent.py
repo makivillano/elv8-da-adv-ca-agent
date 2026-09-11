@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from google.adk.agents import Agent
 from google.adk.apps import App
 from google.adk.models import Gemini
+from google.adk.plugins.bigquery_agent_analytics_plugin import BigQueryAgentAnalyticsPlugin
 from google.genai import types
 
 from app.tools.analytics_tool import cymbal_analytics_tool
@@ -74,9 +75,21 @@ cymbal_operations_agent = Agent(
     ],
 )
 
+PROJECT_ID = os.getenv("PROJECT_ID", "maki-ki-agentic-da-me")
+BQ_TELEMETRY_DATASET = os.getenv("BQ_TELEMETRY_DATASET", "agent_telemetry")
+REGION = os.getenv("REGION", "us-central1")
+
+bq_analytics_plugin = BigQueryAgentAnalyticsPlugin(
+    project_id=PROJECT_ID,
+    dataset_id=BQ_TELEMETRY_DATASET,
+    location=REGION,
+)
+
 root_agent = cymbal_operations_agent
 
 app = App(
     root_agent=root_agent,
     name="app",
+    plugins=[bq_analytics_plugin],
 )
+

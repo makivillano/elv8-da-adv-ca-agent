@@ -1,29 +1,71 @@
 {
   "eval_cases": [
     {
-      "eval_case_id": "greeting",
+      "eval_case_id": "pos_hardware_troubleshooting",
+      "description": "Validates POS hardware troubleshooting runbook retrieval and recovery protocol via pos_troubleshooting_rag_tool",
       "prompt": {
         "role": "user",
-        "parts": [{"text": "Hello, what can you help me with?"}]
-      }
-    },
-    {
-      "eval_case_id": "weather_query",
-      "prompt": {
-        "role": "user",
-        "parts": [{"text": "What's the weather like in San Francisco?"}]
-      }
-    },
-    {
-      "eval_case_id": "capital_lookup",
-      "prompt": {
-        "role": "user",
-        "parts": [{"text": "What is the capital of France?"}]
+        "parts": [
+          {
+            "text": "What is the immediate field recovery protocol when a cashier encounters an ERR-PAY-4001 EMV contactless payment freeze, and how do we ensure the customer is not double-charged?"
+          }
+        ]
       },
+      "context": "Certified Hardware Runbook: Toshiba TCx 810 POS Hardware, Diagnostics & Service Guide. Equipment Covered: Toshiba TCx 810 (TGCS Machine Type 6201: xxC, xx3, xx5, xx7). Documentation Source: [Toshiba_TCx_810_Guide.pdf](https://storage.cloud.google.com/maki-ki-agentic-da-me-module1-bucket/store_pos_manual_generic/Toshiba_TCx_810_Guide.pdf). ERR-PAY-4001 Toshiba TCx 810 Pinpad EMV PIN Pad Tokenization Timeout CRITICAL (Payment). The immediate field recovery protocol and steps to prevent double-charging are: Step 1: Do NOT re-swipe or charge customer card again. This is the primary step to prevent a double-charge. Step 2: Hold Yellow + # on payment PIN pad for 3s to reboot payment module. Step 3: Check 12V PoweredUSB cable connection in rear I/O channel of the Toshiba TCx 810. Step 4: Open Manager Menu and navigate to Journal Audit Slip on Toshiba TCx 810. Step 5: If status shows AUTHORIZED_UNSETTLED, print receipt slip. If status shows VOIDED_ERROR, the transaction did not go through and further action is required.",
       "reference": {
         "response": {
           "role": "model",
-          "parts": [{"text": "The capital of France is Paris."}]
+          "parts": [
+            {
+              "text": "The immediate field recovery protocol for ERR-PAY-4001 EMV contactless payment freeze on Toshiba TCx 810 Pinpad: 1. Do NOT re-swipe or charge customer card again to prevent double-charging. 2. Hold Yellow + # on payment PIN pad for 3s to reboot payment module. 3. Check 12V PoweredUSB cable connection in rear I/O channel. 4. Open Manager Menu -> Journal Audit Slip on Toshiba TCx 810. If status shows AUTHORIZED_UNSETTLED, print receipt slip. If status shows VOIDED_ERROR, the transaction did not go through. Documentation: [Toshiba_TCx_810_Guide.pdf](https://storage.cloud.google.com/maki-ki-agentic-da-me-module1-bucket/store_pos_manual_generic/Toshiba_TCx_810_Guide.pdf)."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "eval_case_id": "inventory_stockout_risk",
+      "description": "Validates BigQuery enterprise warehouse analytics query via cymbal_analytics_tool for stockout risk",
+      "prompt": {
+        "role": "user",
+        "parts": [
+          {
+            "text": "What is the estimated cover hours remaining for store inventory positions experiencing stockout risk of less than 20 hours, and what is their total on-hand inventory?"
+          }
+        ]
+      },
+      "context": "The gold_inventory_reconciliation_ledger lists store inventory positions experiencing stockout risk with less than 20 estimated cover hours remaining, showing their total on-hand inventory and cover hours:\n| store_id | store_name | item_id | total_on_hand_inventory | est_cover_hours_remaining | reconciliation_status |\n| STORE_001 | Cymbal Tokyo Ginza District Flagship | prod_4691 | 135 | 7.2 | MONITOR VELOCITY |\n| STORE_001 | Cymbal Tokyo Ginza District Flagship | prod_9495 | 97 | 17.8 | RECONCILED NORMAL HEALTH |\n| STORE_003 | Cymbal New York Fifth Avenue Megastore | prod_8279 | 61 | 6 | CRITICAL BURN SPIKE - STOCKOUT RISK |\n| STORE_003 | Cymbal New York Fifth Avenue Megastore | prod_4691 | 66 | 6.4 | MONITOR VELOCITY |\n| STORE_003 | Cymbal New York Fifth Avenue Megastore | prod_2194 | 125 | 9.6 | MONITOR VELOCITY |\n| STORE_001 | Cymbal Tokyo Ginza District Flagship | prod_2194 | 56 | 5.7 | CRITICAL BURN SPIKE - STOCKOUT RISK |\n| STORE_001 | Cymbal Tokyo Ginza District Flagship | prod_9495 | 97 | 15.2 | RECONCILED NORMAL HEALTH |\n| STORE_001 | Cymbal Tokyo Ginza District Flagship | prod_4691 | 135 | 16.5 | RECONCILED NORMAL HEALTH |\n| STORE_001 | Cymbal Tokyo Ginza District Flagship | prod_8279 | 49 | 7.9 | MONITOR VELOCITY |\n| STORE_001 | Cymbal Tokyo Ginza District Flagship | prod_4691 | 135 | 8.8 | MONITOR VELOCITY |\n| STORE_008 | Cymbal San Francisco Union Square Flagship | prod_4691 | 51 | 5.8 | CRITICAL BURN SPIKE - STOCKOUT RISK |\n| STORE_008 | Cymbal San Francisco Union Square Flagship | prod_8532 | 30 | 6 | CRITICAL BURN SPIKE - STOCKOUT RISK |\n| STORE_015 | Cymbal Dubai Mall Grand Galleria | prod_4691 | 46 | 4.5 | CRITICAL BURN SPIKE - STOCKOUT RISK |\n| STORE_015 | Cymbal Dubai Mall Grand Galleria | prod_2194 | 110 | 16.3 | RECONCILED NORMAL HEALTH |\n| STORE_010 | Cymbal Stockholm Drottninggatan Galleria | prod_4691 | 151 | 8.1 | MONITOR VELOCITY |\n| STORE_010 | Cymbal Stockholm Drottninggatan Galleria | prod_9495 | 126 | 18.3 | RECONCILED NORMAL HEALTH |\n| STORE_015 | Cymbal Dubai Mall Grand Galleria | prod_4691 | 46 | 5.1 | CRITICAL BURN SPIKE - STOCKOUT RISK |\n| STORE_015 | Cymbal Dubai Mall Grand Galleria | prod_8279 | 89 | 7.7 | MONITOR VELOCITY |\n| STORE_007 | Cymbal Paris Champs-Élysées Flagship | prod_2194 | 66 | 16.9 | RECONCILED NORMAL HEALTH |\n| STORE_016 | Cymbal Sydney Harbour Waterfront Plaza | prod_4691 | 79 | 5.3 | CRITICAL BURN SPIKE - STOCKOUT RISK |",
+      "reference": {
+        "response": {
+          "role": "model",
+          "parts": [
+            {
+              "text": "List of store inventory positions experiencing stockout risk under 20 cover hours remaining, including stores STORE_001, STORE_003, STORE_008, and their respective total on-hand inventory."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "eval_case_id": "cashier_realtime_metrics",
+      "description": "Validates real-time cashier operational telemetry lookup via bigtable_mcp_toolset",
+      "prompt": {
+        "role": "user",
+        "parts": [
+          {
+            "text": "Read live 1-hour rolling metrics and audit status flags for Cashier CASH_1190 at Store 48."
+          }
+        ]
+      },
+      "context": "Cashier CASH_1190 at Store 48 has real-time streaming telemetry in Cloud Bigtable cashier_realtime_alerts: Audit Status: review, Last Event Timestamp: 2026-09-11T04:54:49.682Z, Risk Score: 0.625, 1-hour Total Discount (USD): 0.16, 1-hour Transaction Count: 20, 1-hour Average Discount Percentage: 0.0039, 1-hour Manual Override Count: 13, 1-hour Promo Count: 14, 1-hour Promo Rate: 0.5. Earlier entries show audit_status of clear while most recent entries indicate review.",
+      "reference": {
+        "response": {
+          "role": "model",
+          "parts": [
+            {
+              "text": "Live 1-hour rolling metrics and audit status flags for Cashier CASH_1190 at Store 48: Audit status is review, with 20 transactions, 0.16 USD total discount, 13 manual overrides, and 14 promo counts."
+            }
+          ]
         }
       }
     }
