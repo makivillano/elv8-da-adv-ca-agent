@@ -1,0 +1,29 @@
+kind: source
+name: operations-db
+type: bigtable
+project: maki-ki-agentic-da-me
+instance: operations-db
+---
+kind: tool
+name: get_cashier_realtime_alerts
+type: bigtable-sql
+source: operations-db
+description: "Reads live 1-hour rolling metrics, override rate, and audit status flags for a cashier from Bigtable table cashier_realtime_alerts by row key prefix (e.g. STORE_048#CASH_1190)."
+statement: |
+  SELECT * FROM cashier_realtime_alerts WHERE _key LIKE '{{.row_key_prefix}}%' LIMIT 10;
+templateParameters:
+  - name: row_key_prefix
+    type: string
+    description: "The row key prefix to filter by, formatted as STORE_xxx#CASH_yyyy (e.g. STORE_048#CASH_1190)."
+---
+kind: tool
+name: query_bigtable_sql
+type: bigtable-sql
+source: operations-db
+description: "Executes arbitrary GoogleSQL statements against Cloud Bigtable operations-db instance."
+statement: |
+  {{.sql}}
+templateParameters:
+  - name: sql
+    type: string
+    description: "GoogleSQL query to execute against Bigtable."
